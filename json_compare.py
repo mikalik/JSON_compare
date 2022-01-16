@@ -24,7 +24,7 @@ class Differ():
             self.analysis(second, first, iteration=2)
 
     def analysis(self, first, second, print_res=False, iteration=1, path='') -> None:
-        """Comparison of two any element"""
+        """Check type of element in subJSON object"""
 
         if isinstance(first, dict):
             for key in first:
@@ -37,10 +37,10 @@ class Differ():
                     if key in second:
                         self.analysis(first[key], second[key], print_res=print_res, iteration=iteration, path=new_path)
                     else: 
-                        self.logging_n_print(PATH, new_path, iteration=iteration, print_res=print_res)         
+                        self.logging_n_print(PATH, new_path, iteration, print_res)         
                 else:                                               
-                    self.logging_n_print(PATH, new_path, iteration=iteration, print_res=print_res)
-                    self.analysis(first[key], second, print_res=print_res, iteration=iteration, path=new_path)
+                    self.checkTypeDiff_n_compare(first, second, iteration, path, print_res)
+                    break
 
         elif isinstance(first, list) and isinstance(second, list):
             for (index, item) in enumerate(first):
@@ -50,25 +50,32 @@ class Differ():
                     try:
                         match = second[index]
                     except (TypeError, KeyError):                           
-                        self.logging_n_print(TYPE, f'{item} @{new_path}', iteration=iteration, print_res=print_res)
+                        self.logging_n_print(TYPE, f'{item} @{new_path}', iteration, print_res)
                         break
                     except (IndexError):
-                        self.logging_n_print(INDEX, f'{item} @{new_path}', iteration=iteration, print_res=print_res)
+                        self.logging_n_print(INDEX, f'{item} @{new_path}', iteration, print_res)
                         break
                 
                 self.analysis(first[index], match, print_res=print_res, iteration=iteration, path=new_path)
 
         else:
-            if type(first) is not type(second) and iteration == 1:
-                self.logging_n_print(TYPE, f'{type(first).__name__} | {type(second).__name__} @{path}', iteration=iteration, print_res=print_res)                                             # for element inlast element of recursive call.
-            elif first != second and iteration == 1:
-                self.logging_n_print(VALUE, f'{first} | {second} @{path}', iteration=iteration, print_res=print_res)
-            else:
-                pass
+            self.checkTypeDiff_n_compare(first, second, iteration, path, print_res)
 
         return None
-            
-    def logging_n_print(self, message_type: set, diff_message: str, iteration=1, print_res=False) -> None:
+
+    def checkTypeDiff_n_compare(self, first, second, iteration: int, path: str, print_res: bool) -> None:
+        """Check and compare nesting depth last elements"""
+
+        if type(first) is not type(second) and iteration == 1:
+            return self.logging_n_print(TYPE, f'{type(first).__name__} | {type(second).__name__} @{path}', iteration, print_res)                                         
+        elif first != second and iteration == 1:
+            return self.logging_n_print(VALUE, f'{first} | {second} @{path}', iteration, print_res)
+        else:
+            return None
+
+    def logging_n_print(self, message_type: set, diff_message: str, iteration: int, print_res: bool) -> None:
+        """Save result in field of instance class and print result(optional, default - False)"""
+
         self.logging_analysis[message_type[1]] [diff_message] = iteration
         if print_res:
             print(message_type[0], diff_message)
