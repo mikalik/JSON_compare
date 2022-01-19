@@ -27,20 +27,23 @@ class Differ():
         """Check type of element in subJSON object"""
 
         if isinstance(first, dict):
-            for key in first:
-                if len(path) == 0:
-                    new_path = key
-                else:
-                    new_path = f'{path}/{key}'
+            # if len(first):
+                for key in first:
+                    if len(path) == 0:
+                        new_path = key
+                    else:
+                        new_path = f'{path}/{key}'
 
-                if isinstance(second, dict):
-                    if key in second:
-                        self.analysis(first[key], second[key], print_res=print_res, iteration=iteration, path=new_path)
-                    else: 
-                        self.logging_n_print(PATH, new_path, iteration, print_res)         
-                else:                                               
-                    self.checkTypeDiff_n_compare(first, second, iteration, path, print_res)
-                    break
+                    if isinstance(second, dict):
+                        if key in second:
+                            self.analysis(first[key], second[key], print_res=print_res, iteration=iteration, path=new_path)
+                        else: 
+                            self.logging_n_print(PATH, new_path, iteration, print_res)         
+                    else:                                               
+                        self.checkTypeDiff_n_compare(first, second, iteration, path, print_res)
+                        break
+            else:
+                self.checkTypeDiff_n_compare(first, second, iteration, path, print_res)
 
         elif isinstance(first, list) and isinstance(second, list):
             for (index, item) in enumerate(first):
