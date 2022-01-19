@@ -27,7 +27,7 @@ class Differ():
         """Check type of element in subJSON object"""
 
         if isinstance(first, dict):
-            # if len(first):
+            if len(first):
                 for key in first:
                     if len(path) == 0:
                         new_path = key
